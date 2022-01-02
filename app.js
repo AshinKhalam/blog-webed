@@ -1,8 +1,8 @@
 const { ALPN_ENABLED } = require('constants');
 const { response } = require('express');
 const express = require('express');
-
 const morgan = require('morgan');
+const mongoose = require('mongoose');
 
 const port = 3000;
 
@@ -10,18 +10,50 @@ const app = express();
 
 //server setup
 
-app.set('view engine' , 'ejs');
+app.set('view engine', 'ejs');
+
+const dbURI = 'mongodb+srv://aravindpk:test123@cluster0.6cobp.mongodb.net/cms?retryWrites=true&w=majority';
+
+mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(result => {
+
+        app.listen(port);
+        console.log('server running at  ', port);
+
+    })
+    .catch(err => {
+        console.log(err);
+    })
 
 
-app.listen(port);
-console.log('server running at  ', port);
+
+
+// morgan
 app.use(morgan('dev'));
-
+//static
+app.use(express.static('public'));
 
 
 //home page  // all blogs  ....................................
+
+
 app.get('/', (req, res) => {
-    res.render('index' , { title:'Home' });
+
+
+    let blogarray = [
+
+        { heading: 'headingone', body: 'body one', author: 'me' },
+        { heading: 'headingtttne', body: 'body one', author: 'me' },
+        { heading: 'headintttgone', body: 'body one', author: 'me' },
+        { heading: 'headtttingone', body: 'body one', author: 'me' },
+        { heading: 'headtttingone', body: 'body one', author: 'me' },
+
+
+    ];
+
+
+
+    res.render('index', { title: 'Home', blogs: blogarray });
 
 });
 
@@ -30,7 +62,7 @@ app.get('/', (req, res) => {
 
 app.get('/blog', (req, res) => {
 
-    res.render('blog' , { title:'Blog' });
+    res.render('blog', { title: 'Blog' });
 });
 
 
@@ -41,8 +73,31 @@ app.get('/blog', (req, res) => {
 
 app.get('/editor', (req, res) => {
 
-    res.render('editor' , { title:'Editor' });
+
+
+    let blogarray = [
+
+        { heading: 'headingone', body: 'body one', author: 'me' },
+        { heading: 'headingtttne', body: 'body one', author: 'me' },
+        { heading: 'headintttgone', body: 'body one', author: 'me' },
+        { heading: 'headtttingone', body: 'body one', author: 'me' },
+        { heading: 'headtttingone', body: 'body one', author: 'me' },
+    ]
+
+
+
+    res.render('editor', { title: 'Editor', blogs: blogarray });
 });
+
+
+//create blog
+
+
+app.get('/create', (req, res) => {
+
+    res.render('create', { title: 'Create' });
+});
+
 
 
 
@@ -52,13 +107,13 @@ app.get('/editor', (req, res) => {
 
 app.get('/test', (req, res) => {
 
-    const blog ={
-        heading:'heding1',
-        body:'something neww',
+    const blog = {
+        heading: 'heding1',
+        body: 'something neww',
         author: 'name',
     }
 
-    res.render('test' , { title:'test' , blog:blog });
+    res.render('test', { title: 'test', blog: blog });
 
 
 });
@@ -70,7 +125,7 @@ app.get('/test', (req, res) => {
 
 //middleware
 
-app.use((req,res) =>{
+app.use((req, res) => {
     res.send('404 not found , oops!')
 });
 
