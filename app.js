@@ -4,6 +4,9 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 
+
+const Blog = require('./model/blog.js')
+
 const port = 3000;
 
 const app = express();
@@ -32,6 +35,8 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 app.use(morgan('dev'));
 //static
 app.use(express.static('public'));
+//url parse
+app.use(express.urlencoded({ extended: true }));
 
 
 //home page  // all blogs  ....................................
@@ -40,30 +45,66 @@ app.use(express.static('public'));
 app.get('/', (req, res) => {
 
 
-    let blogarray = [
+    Blog.find().sort({ createdAt: -1 })
+        .then(result => {
 
-        { heading: 'headingone', body: 'body one', author: 'me' },
-        { heading: 'headingtttne', body: 'body one', author: 'me' },
-        { heading: 'headintttgone', body: 'body one', author: 'me' },
-        { heading: 'headtttingone', body: 'body one', author: 'me' },
-        { heading: 'headtttingone', body: 'body one', author: 'me' },
+            res.render('index', { title: 'Home', blogs: result });
 
+        })
+        .catch(err => console.log(err))
 
-    ];
-
-
-
-    res.render('index', { title: 'Home', blogs: blogarray });
 
 });
 
 
 // single blog ................................................
 
-app.get('/blog', (req, res) => {
+app.get('/blog/:id', (req, res) => {
 
-    res.render('blog', { title: 'Blog' });
+
+    const id = req.params.id;
+
+
+    Blog.findById(id)
+        .then(result => {
+            console.log(result);
+
+            res.render('blog', { title: 'Blog' ,blog:result});
+
+        })
+        .catch(err => console.log(err))
+
+
 });
+
+
+
+
+
+// delete blog ................................................
+
+app.delete('/blog/:id', (req, res) => {
+
+
+    const id = req.params.id;
+
+
+    Blog.findByIdAndDelete(id)
+        .then(result => {
+            console.log(result);
+
+            res.render('blog', { title: 'Blog' ,blog:result});
+
+        })
+        .catch(err => console.log(err))
+
+
+});
+
+
+
+
+
 
 
 
@@ -74,19 +115,18 @@ app.get('/blog', (req, res) => {
 app.get('/editor', (req, res) => {
 
 
+    Blog.find().sort({ createdAt: -1 })
+        .then(result => {
 
-    let blogarray = [
-
-        { heading: 'headingone', body: 'body one', author: 'me' },
-        { heading: 'headingtttne', body: 'body one', author: 'me' },
-        { heading: 'headintttgone', body: 'body one', author: 'me' },
-        { heading: 'headtttingone', body: 'body one', author: 'me' },
-        { heading: 'headtttingone', body: 'body one', author: 'me' },
-    ]
+            res.render('editor', { title: 'Editor', blogs: result });
 
 
+        })
+        .catch(err => console.log(err))
 
-    res.render('editor', { title: 'Editor', blogs: blogarray });
+
+
+
 });
 
 
@@ -99,21 +139,15 @@ app.get('/create', (req, res) => {
 });
 
 
+app.post('/create', (req, res) => {
 
+    const blog = new Blog(req.body);
 
-
-// test blog ................................................
-
-
-app.get('/test', (req, res) => {
-
-    const blog = {
-        heading: 'heding1',
-        body: 'something neww',
-        author: 'name',
-    }
-
-    res.render('test', { title: 'test', blog: blog });
+    blog.save()
+        .then(result => {
+            res.redirect('/editor');
+        })
+        .catch(err => console.log(err));
 
 
 });
@@ -132,6 +166,4 @@ app.use((req, res) => {
 
 
 
-
-
-
+//   /blog/:id

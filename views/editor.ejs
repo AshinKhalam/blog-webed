@@ -6,8 +6,6 @@
 
 
 
-
-
   <body>
 
     <%- include('./partials/nav.ejs') %>
@@ -48,15 +46,12 @@
                 <p class="card-text"> Writter : <%= blog.author  %> </p>
               </div>
               <div class="card-footer d-flex justify-content-end">
-                <a href="" class="mr-4 text-danger"><i class="far fa-trash-alt"></i></a>
-                <a href="" class="mr-0 text-warning"><i class="far fa-edit"></i></a>
+                <a href="" class="mr-4 text-danger"><i  onclick="deleteBtn(event)" class="far fa-trash-alt"></i></a>
 
+                <a href="" class="mr-0 text-warning"><i  class="far fa-edit"></i></a>
               </div>
             </div>
           </div>
-
-
-
             
           <% }) %>  
 
