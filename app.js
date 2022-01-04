@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 
 const Blog = require('./model/blog.js')
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const app = express();
 
@@ -77,29 +77,30 @@ app.get('/blog/:id', (req, res) => {
 
 });
 
+//single blog delete
 
 
-
-
-// delete blog ................................................
 
 app.delete('/blog/:id', (req, res) => {
 
 
     const id = req.params.id;
 
+    const myresponse = {
+        status:'sucess'
+    }
+
 
     Blog.findByIdAndDelete(id)
         .then(result => {
-            console.log(result);
-
-            res.render('blog', { title: 'Blog' ,blog:result});
-
+        
+           res.json(myresponse)
         })
         .catch(err => console.log(err))
 
 
 });
+
 
 
 

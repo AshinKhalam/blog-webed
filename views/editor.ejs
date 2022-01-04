@@ -46,7 +46,7 @@
                 <p class="card-text"> Writter : <%= blog.author  %> </p>
               </div>
               <div class="card-footer d-flex justify-content-end">
-                <a href="" class="mr-4 text-danger"><i  onclick="deleteBtn(event)" class="far fa-trash-alt"></i></a>
+                <a href="" class="mr-4 text-danger"><i id="<%= blog._id %>"  onclick="deleteBtn(event)" class="far fa-trash-alt"></i></a>
 
                 <a href="" class="mr-0 text-warning"><i  class="far fa-edit"></i></a>
               </div>
@@ -58,7 +58,6 @@
         <% } %> 
 
 
-
         </div>
       </div>
 
@@ -66,9 +65,25 @@
 
       <script>
 
+
+
         const deleteBtn = (event) =>{
 
-          console.log(event);
+          event.preventDefault();
+          console.log(event.target.id );
+
+          const id = event.target.id;
+
+          const endpoint = `/blog/${id}`;
+
+
+          fetch( endpoint,{
+            method:'DELETE'
+          } )
+          .then(response => response.json())
+          .then(data => window.location.href = '/editor')
+          .catch(err => console.log(err));
+
 
         }
 
